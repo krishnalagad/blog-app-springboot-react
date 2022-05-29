@@ -1,0 +1,19 @@
+package com.blogapp.services;
+
+import java.util.List;
+
+import com.blogapp.payload.UserDto;
+
+public interface UserService {
+	
+	UserDto createUser(UserDto user);
+	
+	UserDto updateeUser(UserDto user, Integer userId);
+	
+	UserDto getUserById(Integer userId);
+	
+	List<UserDto> getAllUsers();
+	
+	void deleteUserById(Integer userId);
+
+}
