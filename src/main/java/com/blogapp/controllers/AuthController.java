@@ -16,9 +16,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.blogapp.exceptions.InvalidUserDetailsException;
+import com.blogapp.payload.UserDto;
 import com.blogapp.security.JwtAuthRequest;
 import com.blogapp.security.JwtAuthResponse;
 import com.blogapp.security.JwtTokenHelper;
+import com.blogapp.services.UserService;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -33,6 +35,10 @@ public class AuthController {
 	@Autowired
 	private AuthenticationManager authenticationManager;
 
+	@Autowired
+	private UserService userService;
+
+	// API to login user : Security not applied to this API
 	@PostMapping("/login")
 	public ResponseEntity<JwtAuthResponse> createToken(@RequestBody JwtAuthRequest request) throws Exception {
 
@@ -70,6 +76,24 @@ public class AuthController {
 			throw new InvalidUserDetailsException();
 		}
 
+	}
+
+	// API to register new user : Security not applied to this API.
+	@PostMapping("/register")
+	public ResponseEntity<UserDto> registerUser(@RequestBody UserDto userDto) {
+
+		UserDto registeredUser = this.userService.registerNewUser(userDto);
+
+		return new ResponseEntity<UserDto>(registeredUser, HttpStatus.CREATED);
+	}
+
+	// API to register new user : Security not applied to this API.
+	@PostMapping("/register-admin")
+	public ResponseEntity<UserDto> registerAdminUser(@RequestBody UserDto userDto) {
+
+		UserDto registeredUser = this.userService.registerNewAdminUser(userDto);
+
+		return new ResponseEntity<UserDto>(registeredUser, HttpStatus.CREATED);
 	}
 
 }
