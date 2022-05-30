@@ -9,6 +9,7 @@ Key concepts you'll get to learn from the project:
 3. Bean Validation
 4. Spring Security
 5. JWT Authentication
-6. Exception Handling at global level in project.
-7. Entity parsing using ModelMapper
-8. Lombok Annotations
+6. Documentation using swagger API.
+7. Exception Handling at global level in project.
+8. Entity parsing using ModelMapper
+9. Lombok Annotations
