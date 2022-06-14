@@ -16,7 +16,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.blogapp.exceptions.InvalidUserDetailsException;
+import com.blogapp.payload.ForgotPasswordDto;
 import com.blogapp.payload.UserDto;
+import com.blogapp.payload.UserResponse;
 import com.blogapp.security.JwtAuthRequest;
 import com.blogapp.security.JwtAuthResponse;
 import com.blogapp.security.JwtTokenHelper;
@@ -94,6 +96,15 @@ public class AuthController {
 		UserDto registeredUser = this.userService.registerNewAdminUser(userDto);
 
 		return new ResponseEntity<UserDto>(registeredUser, HttpStatus.CREATED);
+	}
+
+	// API to handle forgot password requests
+	@PostMapping("/forgot-password")
+	public ResponseEntity<UserResponse> forgotPass(@RequestBody ForgotPasswordDto forgotPasswordDto) {
+
+		UserDto userDto = this.userService.forgotPasswordTest2(forgotPasswordDto);
+		return new ResponseEntity<UserResponse>(new UserResponse(userDto, "Password reset successfully.", true),
+				HttpStatus.OK);
 	}
 
 }

@@ -19,48 +19,63 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.blogapp.payload.ApiResponse;
 import com.blogapp.payload.UserDto;
+import com.blogapp.payload.UserResponse;
 import com.blogapp.services.UserService;
 
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
-	
+
 	@Autowired
 	private UserService userService;
-	
+
 	@PostMapping("/")
-	public ResponseEntity<UserDto> createUser(@Valid @RequestBody UserDto userDto){
-		
+	public ResponseEntity<UserDto> createUser(@Valid @RequestBody UserDto userDto) {
+
 		UserDto createdUserDto = this.userService.createUser(userDto);
 		return new ResponseEntity<>(createdUserDto, HttpStatus.CREATED);
-		
+
 	}
-	
+
 	@PutMapping("/{userId}")
-	public ResponseEntity<UserDto> updateUser(@Valid @RequestBody UserDto userDto, @PathVariable("userId") Integer uId){
-		
+	public ResponseEntity<UserDto> updateUser(@Valid @RequestBody UserDto userDto,
+			@PathVariable("userId") Integer uId) {
+
 		UserDto updatedUser = this.userService.updateeUser(userDto, uId);
 		return ResponseEntity.ok(updatedUser);
 	}
-	
+
 	@PreAuthorize("hasRole('ADMIN')")
 	@DeleteMapping("/{userId}")
-	public ResponseEntity<ApiResponse> deleteUser(@PathVariable("userId") Integer uId){
-		
+	public ResponseEntity<ApiResponse> deleteUser(@PathVariable("userId") Integer uId) {
+
 		this.userService.deleteUserById(uId);
-		// return new ResponseEntity<>(Map.of("message", "User deleted successfully..."), HttpStatus.OK);
+		// return new ResponseEntity<>(Map.of("message", "User deleted
+		// successfully..."), HttpStatus.OK);
 		return new ResponseEntity<ApiResponse>(new ApiResponse("User deleted successfully...", true), HttpStatus.OK);
 	}
-	
+
 	@GetMapping("/")
-	public ResponseEntity<List<UserDto>> getAllUsers(){
+	public ResponseEntity<List<UserDto>> getAllUsers() {
 		return ResponseEntity.ok(this.userService.getAllUsers());
 	}
-	
+
 	@GetMapping("/{userId}")
-	public ResponseEntity<UserDto> getUser(@PathVariable("userId") Integer uid){
+	public ResponseEntity<UserDto> getUser(@PathVariable("userId") Integer uid) {
 		return ResponseEntity.ok(this.userService.getUserById(uid));
 	}
-	
+
+//	-----------------------------------------------------Testing API's------------------------------------------------------------------
+//	------------------------------------------------------------------------------------------------------------------------------------
+
+	@PostMapping("/forgot-pass/{username}/{newPass}")
+	public ResponseEntity<UserResponse> forgotPassword(@PathVariable("username") String username,
+			@PathVariable("newPass") String newPass) {
+
+		UserDto userDto = this.userService.forgotPassword(username, newPass);
+		return new ResponseEntity<UserResponse>(new UserResponse(userDto, "New password set successfully...", true),
+				HttpStatus.OK);
+
+	}
 
 }

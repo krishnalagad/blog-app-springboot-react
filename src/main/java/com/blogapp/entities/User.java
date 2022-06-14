@@ -66,7 +66,7 @@ public class User implements UserDetails {
 	private Set<Role> roles = new HashSet<Role>();
 
 //	-----------------------------------------------------------------------------------------------------------------------------------
-
+//  -----------------------------------------------------------------------------------------------------------------------------------
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 

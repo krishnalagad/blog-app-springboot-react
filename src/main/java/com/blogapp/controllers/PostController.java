@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.blogapp.config.AppConstants;
+import com.blogapp.exceptions.AlreadyExistsException;
 import com.blogapp.payload.ApiResponse;
 import com.blogapp.payload.PostDto;
 import com.blogapp.payload.PostResponce;
@@ -104,7 +105,7 @@ public class PostController {
 		PostDto updatePost = this.postService.updatePost(postDto, pId);
 		return new ResponseEntity<PostDto>(updatePost, HttpStatus.OK);
 	}
-	
+
 	// API to search posts using keyword
 	@GetMapping("/posts/search/{keywords}")
 	public ResponseEntity<List<PostDto>> searchPostByTitle(@PathVariable("keywords") String kw) {
@@ -119,9 +120,13 @@ public class PostController {
 	// API to upload file
 	@PostMapping("/post/image/upload/{postId}")
 	public ResponseEntity<PostDto> fileUpload(@RequestParam("image") MultipartFile image,
-			@PathVariable("postId") Integer pId) throws IOException {
+			@PathVariable("postId") Integer pId) throws IOException, AlreadyExistsException {
 
 		PostDto postDto = this.postService.getPostById(pId);
+
+		if (postDto.getImageName() != null || postDto.getImageName() != "") {
+			throw new AlreadyExistsException("Image for this post is already exists...");
+		}
 
 		String fileName;
 		fileName = this.fileService.uploadImage(path, image);
@@ -170,8 +175,7 @@ public class PostController {
 			@RequestParam(value = "sortBy", defaultValue = AppConstants.SORT_BY, required = false) String sortBy,
 			@RequestParam(value = "sortType", defaultValue = AppConstants.SORT_TYPE, required = false) String sortType) {
 
-		PostResponce postResponce = this.postService.testGetAllPostByUser(uId, pageNumber, pageSize, sortBy,
-				sortType);
+		PostResponce postResponce = this.postService.testGetAllPostByUser(uId, pageNumber, pageSize, sortBy, sortType);
 		return new ResponseEntity<PostResponce>(postResponce, HttpStatus.OK);
 	}
 

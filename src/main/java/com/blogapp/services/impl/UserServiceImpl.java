@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import com.blogapp.config.AppConstants;
 import com.blogapp.entities.Role;
 import com.blogapp.entities.User;
+import com.blogapp.payload.ForgotPasswordDto;
 import com.blogapp.payload.UserDto;
 import com.blogapp.repositories.RoleRepo;
 import com.blogapp.repositories.UserRepo;
@@ -146,14 +147,51 @@ public class UserServiceImpl implements UserService {
 		// getting role for new admin user
 		Role role = this.roleRepo.findById(AppConstants.ADMIN_USER)
 				.orElseThrow(() -> new ResourceNotFoundException("Role", "ID", AppConstants.ADMIN_USER));
-		
+
 		// setting role to new admin user
 		user.getRoles().add(role);
-		
+
 		// saving new admin user in the database using repository
 		User savedAdminUser = this.userRepo.save(user);
 
 		return this.modelMapper.map(savedAdminUser, UserDto.class);
+	}
+
+//	------------------------------------------------Testing Implementation methods-----------------------------------------------------
+//	-----------------------------------------------------------------------------------------------------------------------------------
+
+	@Override
+	public UserDto forgotPassword(String username, String newPass) {
+
+		User user = this.userRepo.findByEmail(username)
+				.orElseThrow(() -> new ResourceNotFoundException("User", "Username: " + username, 0));
+
+		if (user != null) {
+			user.setPassword(this.passwordEncoder.encode(newPass));
+		}
+
+		User savedUser = this.userRepo.save(user);
+
+		UserDto userDto = this.modelMapper.map(savedUser, UserDto.class);
+
+		return userDto;
+	}
+
+	@Override
+	public UserDto forgotPasswordTest2(ForgotPasswordDto forgotPasswordDto) {
+
+		User user = this.userRepo.findByEmail(forgotPasswordDto.getUsername()).orElseThrow(
+				() -> new ResourceNotFoundException("User", "Username: " + forgotPasswordDto.getUsername(), 0));
+
+		if (user != null) {
+			user.setPassword(this.passwordEncoder.encode(forgotPasswordDto.getNewPassword()));
+		}
+		
+		User savedUser = this.userRepo.save(user);
+		
+		UserDto userDto = this.modelMapper.map(savedUser, UserDto.class);
+		
+		return userDto;
 	}
 
 }

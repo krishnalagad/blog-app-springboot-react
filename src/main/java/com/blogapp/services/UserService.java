@@ -2,6 +2,7 @@ package com.blogapp.services;
 
 import java.util.List;
 
+import com.blogapp.payload.ForgotPasswordDto;
 import com.blogapp.payload.UserDto;
 
 public interface UserService {
@@ -19,5 +20,10 @@ public interface UserService {
 	List<UserDto> getAllUsers();
 	
 	void deleteUserById(Integer userId);
+	
+	UserDto forgotPassword(String username, String newPass);
+	
+	UserDto forgotPasswordTest2(ForgotPasswordDto forgotPasswordDto);
+	
 
 }
