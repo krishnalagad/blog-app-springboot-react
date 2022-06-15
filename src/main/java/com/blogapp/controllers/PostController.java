@@ -1,5 +1,6 @@
 package com.blogapp.controllers;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -123,12 +124,25 @@ public class PostController {
 			@PathVariable("postId") Integer pId) throws IOException, AlreadyExistsException {
 
 		PostDto postDto = this.postService.getPostById(pId);
+		File file = null;
+		String fileName;
 
 		if (postDto.getImageName() != null || postDto.getImageName() != "") {
-			throw new AlreadyExistsException("Image for this post is already exists...");
+			try {
+				file = new File(path + File.separator + postDto.getImageName());
+				if (file.delete()) {
+					System.out.println("File deleted successfully...");
+				} else {
+					System.out.println("File not deleted successfully...");
+					throw new AlreadyExistsException("Image for this post is already exists : unable to delete");
+				}
+			} catch (Exception e) {
+				System.out.println("Failed to Delete image !!");
+				throw new AlreadyExistsException("Image for this post is already exists : Fail to delete");
+			}
+			
 		}
 
-		String fileName;
 		fileName = this.fileService.uploadImage(path, image);
 
 		postDto.setImageName(fileName);
