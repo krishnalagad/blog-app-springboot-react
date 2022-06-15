@@ -18,14 +18,15 @@ import com.blogapp.services.FileService;
 public class FileServiceImpl implements FileService {
 
 	@Override
-	public String uploadImage(String path, MultipartFile file) throws IOException {
+	public String uploadImage(String path, MultipartFile file, String postId) throws IOException {
 		
 		// get file name
 		String name = file.getOriginalFilename();
 		
 		// random name generation of image while uploading to store in folder.
 		String randomId = UUID.randomUUID().toString();
-		String fileName1 = randomId.concat(name.substring(name.lastIndexOf(".")));
+		// String fileName1 = randomId.concat(name.substring(name.lastIndexOf(".")));
+		String fileName1 = "POST$" + postId + "-" + randomId.concat(name.substring(name.lastIndexOf(".")));
 		
 		// full path of file
 		String filePath = path + File.separator + fileName1;

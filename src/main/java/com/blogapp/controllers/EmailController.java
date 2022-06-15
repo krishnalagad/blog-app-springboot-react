@@ -22,7 +22,7 @@ public class EmailController {
 	public ResponseEntity<ApiResponse> sendMail(@RequestBody EmailDetails details) {
 		String status = emailService.sendSimpleMail(details);
 		boolean flag;
-		
+
 		if (status.equals("Mail Sent Successfully...")) {
 			flag = true;
 		} else {
@@ -34,10 +34,17 @@ public class EmailController {
 
 	// Sending email with attachment
 	@PostMapping("/sendMailWithAttachment")
-	public String sendMailWithAttachment(@RequestBody EmailDetails details) {
+	public ResponseEntity<ApiResponse> sendMailWithAttachment(@RequestBody EmailDetails details) {
 		String status = emailService.sendMailWithAttachment(details);
+		boolean flag;
 
-		return status;
+		if (status.equals("Mail Sent Successfully...")) {
+			flag = true;
+		} else {
+			flag = false;
+		}
+
+		return new ResponseEntity<ApiResponse>(new ApiResponse(status, flag), HttpStatus.OK);
 	}
 
 }

@@ -101,7 +101,7 @@ public class PostController {
 
 	// API to update post details
 	@PutMapping("/posts/{postId}")
-	public ResponseEntity<PostDto> updatePostById(@RequestBody PostDto postDto, @PathVariable("postId") Integer pId) {
+	public ResponseEntity<PostDto> updatePostById(@Valid @RequestBody PostDto postDto, @PathVariable("postId") Integer pId) {
 
 		PostDto updatePost = this.postService.updatePost(postDto, pId);
 		return new ResponseEntity<PostDto>(updatePost, HttpStatus.OK);
@@ -118,9 +118,9 @@ public class PostController {
 //  ----------------------------------------------Image/File Upload and retrieve-------------------------------------------------------
 //	-----------------------------------------------------------------------------------------------------------------------------------
 
-	// API to upload file
+	// API to upload and save image into folder.
 	@PostMapping("/post/image/upload/{postId}")
-	public ResponseEntity<PostDto> fileUpload(@RequestParam("image") MultipartFile image,
+	public ResponseEntity<PostDto> imageUpload(@RequestParam("image") MultipartFile image,
 			@PathVariable("postId") Integer pId) throws IOException, AlreadyExistsException {
 
 		PostDto postDto = this.postService.getPostById(pId);
@@ -143,7 +143,7 @@ public class PostController {
 			
 		}
 
-		fileName = this.fileService.uploadImage(path, image);
+		fileName = this.fileService.uploadImage(path, image, Integer.toString(pId));
 
 		postDto.setImageName(fileName);
 
