@@ -13,3 +13,4 @@ Key concepts you'll get to learn from the project:
 7. Exception Handling at global level in project.
 8. Entity parsing using ModelMapper
 9. Lombok Annotations
+10. Spring Boot – Sending Email via SMTP
