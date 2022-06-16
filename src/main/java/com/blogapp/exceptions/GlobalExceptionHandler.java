@@ -65,4 +65,14 @@ public class GlobalExceptionHandler {
 		return new ResponseEntity<ApiResponse>(apiResponse, HttpStatus.NOT_ACCEPTABLE);
 	}
 
+	@ExceptionHandler(SimplePlainTextException.class)
+	public ResponseEntity<Map<String, String>> handleSimplePlainTextException(SimplePlainTextException ex) {
+		
+		Map<String,String> resp = new HashMap<String, String>();
+		String message = ex.getMessage();
+		resp.put("message", message);
+		
+		return new ResponseEntity<Map<String,String>>(resp, HttpStatus.BAD_REQUEST);
+	}
+
 }

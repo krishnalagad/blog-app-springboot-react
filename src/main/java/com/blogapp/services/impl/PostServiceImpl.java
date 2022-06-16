@@ -1,5 +1,6 @@
 package com.blogapp.services.impl;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -7,6 +8,7 @@ import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -17,6 +19,7 @@ import com.blogapp.entities.Category;
 import com.blogapp.entities.Post;
 import com.blogapp.entities.User;
 import com.blogapp.exceptions.ResourceNotFoundException;
+import com.blogapp.exceptions.SimplePlainTextException;
 import com.blogapp.payload.PostDto;
 import com.blogapp.payload.PostResponce;
 import com.blogapp.repositories.CategoryRepo;
@@ -38,6 +41,9 @@ public class PostServiceImpl implements PostService {
 
 	@Autowired
 	private CategoryRepo categoryRepo;
+	
+	@Value("${project.image}")
+	private String path;
 
 	@Override
 	public PostDto createPost(PostDto postDto, Integer userId, Integer categoryId) {
@@ -49,7 +55,7 @@ public class PostServiceImpl implements PostService {
 				.orElseThrow(() -> new ResourceNotFoundException("Category", "ID", categoryId));
 
 		Post post = this.modelMapper.map(postDto, Post.class);
-		post.setImageName("default.png");
+//		post.setImageName("default.png");
 		post.setAddedDate(new Date());
 		post.setUser(user);
 		post.setCategory(category);
@@ -78,8 +84,22 @@ public class PostServiceImpl implements PostService {
 	@Override
 	public void deletePost(Integer postId) {
 
+		File file = null;
 		Post post = this.postRepo.findById(postId)
 				.orElseThrow(() -> new ResourceNotFoundException("Post", "Id", postId));
+		
+		try {
+			file = new File(path + File.separator + post.getImageName());
+			if(file.delete()) {
+				System.out.println("File post with ID " + post.getPostId() + " is deleted successfully...");
+			}else {
+				System.out.println("File post with ID " + post.getPostId() + " is not deleted successfully...");
+				throw new SimplePlainTextException("File post with ID " + post.getPostId() + " is not deleted successfully...");
+			}
+		} catch (Exception e) {
+			System.out.println("Image failed to delete...");
+			e.printStackTrace();
+		}
 
 		this.postRepo.delete(post);
 	}

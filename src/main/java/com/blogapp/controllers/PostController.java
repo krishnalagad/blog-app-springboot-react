@@ -101,7 +101,8 @@ public class PostController {
 
 	// API to update post details
 	@PutMapping("/posts/{postId}")
-	public ResponseEntity<PostDto> updatePostById(@Valid @RequestBody PostDto postDto, @PathVariable("postId") Integer pId) {
+	public ResponseEntity<PostDto> updatePostById(@Valid @RequestBody PostDto postDto,
+			@PathVariable("postId") Integer pId) {
 
 		PostDto updatePost = this.postService.updatePost(postDto, pId);
 		return new ResponseEntity<PostDto>(updatePost, HttpStatus.OK);
@@ -125,13 +126,29 @@ public class PostController {
 
 		PostDto postDto = this.postService.getPostById(pId);
 		File file = null;
-		String fileName;
+		String fileName = null;
 
+		// Condition 1 : Set image for new post
+		// and store it in folder.
+		if (postDto.getImageName() == null || postDto.getImageName().equals("")) {
+			
+			fileName = this.fileService.uploadImage(path, image, Integer.toString(pId));
+
+			postDto.setImageName(fileName);
+			PostDto updatedPOstDto = this.postService.updatePost(postDto, pId);
+			System.out.println("New image set successfully...");
+
+			return new ResponseEntity<PostDto>(updatedPOstDto, HttpStatus.OK);
+		}
+
+		// Condition 2 : If image already exists then delete it from
+		// the folder and update it with new image.
 		if (postDto.getImageName() != null || postDto.getImageName() != "") {
 			try {
 				file = new File(path + File.separator + postDto.getImageName());
 				if (file.delete()) {
-					System.out.println("File deleted successfully...");
+					fileName = this.fileService.uploadImage(path, image, Integer.toString(pId));
+					System.out.println("Existing image deleted successfully...\nSaving new image");
 				} else {
 					System.out.println("File not deleted successfully...");
 					throw new AlreadyExistsException("Image for this post is already exists : unable to delete");
@@ -140,13 +157,9 @@ public class PostController {
 				System.out.println("Failed to Delete image !!");
 				throw new AlreadyExistsException("Image for this post is already exists : Fail to delete");
 			}
-			
 		}
 
-		fileName = this.fileService.uploadImage(path, image, Integer.toString(pId));
-
 		postDto.setImageName(fileName);
-
 		PostDto updatedPOstDto = this.postService.updatePost(postDto, pId);
 
 		return new ResponseEntity<PostDto>(updatedPOstDto, HttpStatus.OK);
@@ -164,7 +177,7 @@ public class PostController {
 
 	}
 
-//	------------------------------------------------------Testing API area starts here-----------------------------------------------------------------------
+//	------------------------------------------------------Testing API area starts here-----------------------------------------------
 //  ---------------------------------------------------------------------------------------------------------------------------------
 
 	// API to get categorywise all the posts from database with pagination and
@@ -192,5 +205,4 @@ public class PostController {
 		PostResponce postResponce = this.postService.testGetAllPostByUser(uId, pageNumber, pageSize, sortBy, sortType);
 		return new ResponseEntity<PostResponce>(postResponce, HttpStatus.OK);
 	}
-
 }
