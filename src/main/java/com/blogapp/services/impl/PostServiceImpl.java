@@ -91,9 +91,9 @@ public class PostServiceImpl implements PostService {
 		try {
 			file = new File(path + File.separator + post.getImageName());
 			if(file.delete()) {
-				System.out.println("File post with ID " + post.getPostId() + " is deleted successfully...");
+				System.out.println("Image of post with ID " + post.getPostId() + " is deleted successfully...");
 			}else {
-				System.out.println("File post with ID " + post.getPostId() + " is not deleted successfully...");
+				System.out.println("Image of post with ID " + post.getPostId() + " is not deleted successfully...");
 				throw new SimplePlainTextException("File post with ID " + post.getPostId() + " is not deleted successfully...");
 			}
 		} catch (Exception e) {
