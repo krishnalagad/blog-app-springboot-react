@@ -63,7 +63,7 @@ public class EmailServiceImpl implements EmailService {
 		try {
 
 			// Setting multipart as true for attachments to
-			// be send
+			// be sent
 			mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
 			mimeMessageHelper.setFrom(sender);
 			mimeMessageHelper.setTo(details.getRecipient());
